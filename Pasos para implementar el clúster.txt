@@ -1,0 +1,105 @@
+Instalar el Fedora WorkStation utilizando VMWare
+
+
+Reiniciar el Fedora
+Activar que se admitan repositorios de terceros
+En Configuraciones y modificar el nombre de host a master-node
+
+Entrar a la Terminal
+sudo yum update
+sudo systemctl stop firewall-cmd
+sudo setenforce 0 //realizarlo cada cuando se reinicia la VM
+
+
+java -version // para comprobar si Java esta instalado
+
+Instalar Apache Spark en el nodo maestro:
+cd /opt
+sudo wget http://www-eu.apache.org/dist/spark/spark-3.0.3/spark-3.0.3-bin-hadoop2.7.tgz
+sudo tar -xzf spark-3.0.3-bin-hadoop2.7.tgz
+ls -la
+sudo ln -s /opt/spark-3.0.3-bin-hadoop2.7 /opt/spark
+cd spark/
+ls -lha
+sudo ./sbin/start-master.sh  // Se conecta al puerto 8080
+sudo iptables -I INPUT -p all -s localhost -d localhost -j ACCEPT
+	Permite acceder al localhost en el mismo Fedora
+		[Comprobar en el navegador con la IP del equipo en otro equipo]
+		ip a
+		http://IP:8080
+
+sudo ./sbin/stop-master.sh
+nano ~/. bashrc
+	Agregar esas líneas
+	export SPARK_HOME=/opt/spark
+	export PATH=$SPARK_HOME/bin:$PATH
+
+sudo ./sbin/start-master.sh
+
+
+INSTALAR el Fedora Server worker1
+Con la cuenta equipodba
+junto con la root y poner contraseña a ambas cuentas
+
+cambiar el hostname del nodo 2
+
+su -
+hostnamectl set-hostname worker1-node2
+exit
+exit
+[ingresar nuevamente a la sesión]
+su -
+sudo yum update
+sudo systemctl stop firewall-cmd
+sudo setenforce 0 //realizarlo cada cuando se reinicia la VM
+
+java -version // para comprobar si Java esta instalado
+[no lo tiene instalado, por lo tanto seguir los pasos para su instalación]
+yum install java-1.8.0-openjdk
+java -version
+yum install python
+
+cd /opt
+sudo wget http://www-eu.apache.org/dist/spark/spark-3.0.3/spark-3.0.3-bin-hadoop2.7.tgz
+
+[Apagar la máquina virtual para realizar una clonación]
+seleccionar la máquina del servidor worker1 (clic derecho)
+
+Manage -> Clone
+
+Next
+Current state change
+Create a full clone
+Colocar el nombre de "Fedora 64-bit worker2"
+
+
+VOLVER A iniciar la worker1
+su -
+cd /opt
+sudo tar -xzf spark-3.0.3-bin-hadoop2.7.tgz
+ls -la
+sudo ln -s /opt/spark-3.0.3-bin-hadoop2.7 /opt/spark
+cd spark/
+ls -lha
+                              #  IP del master : puerto
+sudo ./sbin/start-slave.sh spark://192.168.0.24:7077
+
+INICIAR la worker2
+su -
+hostnamectl set-hostname worker2-node3
+exit
+exit
+[ingresar nuevamente a la sesión]
+su -
+cd /opt
+sudo tar -xzf spark-3.0.3-bin-hadoop2.7.tgz
+ls -la
+sudo ln -s /opt/spark-3.0.3-bin-hadoop2.7 /opt/spark
+cd spark/
+ls -lha
+                              #  IP del master : puerto
+sudo ./sbin/start-slave.sh spark://192.168.0.24:7077
+
+Y LISTO YA ESTAN LOS 3 NODOS
+- 2 workers 
+- 1 master

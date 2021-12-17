@@ -1,0 +1,7 @@
+https://fedoramagazine.org/python-3-9-alpha-in-fedora/
+
+https://fedoraproject.org/wiki/Differences_to_Ubuntu
+
+https://bodman.wordpress.com/2020/04/03/installing-apache-spark-on-fedora/
+
+spark3.0.3-hadoop2.7
